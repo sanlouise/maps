@@ -10,28 +10,44 @@ import UIKit
 
 //Import this
 import MapKit
+import CoreLocation
 
-//Add delegate
+//Add delegates
 
-class ViewController: UIViewController, MKMapViewDelegate {
+class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDelegate {
 
     @IBOutlet var map: MKMapView!
     
-    
+    var locationManager = CLLocationManager()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        //Choose whether to always have access or not.
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.startUpdatingLocation()
+        
+        
+        
+        
+        
+        
+        
+        
         // Zoom in to particular location
         
-        var latitude:CLLocationDegrees = 52.179435
-        var longitude:CLLocationDegrees = 5.289613
+        var latitude:CLLocationDegrees = 50.179435
+        var longitude:CLLocationDegrees = 6.289613
         
         
         //Difference between latitude/longitude of one side of the screen to the other, for zooming.
         
-        var latDelta:CLLocationDegrees = 0.05
+        var latDelta:CLLocationDegrees = 0.01
         
-        var lonDelta: CLLocationDegrees = 0.05
+        var lonDelta: CLLocationDegrees = 0.01
         
         let span:MKCoordinateSpan = MKCoordinateSpanMake(latDelta, lonDelta)
         
@@ -100,7 +116,33 @@ class ViewController: UIViewController, MKMapViewDelegate {
     
     
     
-    
+    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        
+        print(locations)
+        
+        // This returns the first value from CLLocation, unless the user is moving extremely fast this one will not differ much from location that usually returns 1.
+        
+        var userLocation: CLLocation = locations[0] as! CLLocation
+        
+        
+        var latitude = userLocation.coordinate.latitude
+        var longitude = userLocation.coordinate.longitude
+        
+        var latDelta:CLLocationDegrees = 0.01
+        
+        var lonDelta: CLLocationDegrees = 0.01
+        
+        let span:MKCoordinateSpan = MKCoordinateSpanMake(latDelta, lonDelta)
+        
+        let location: CLLocationCoordinate2D = CLLocationCoordinate2DMake(latitude, longitude)
+        
+        let region:MKCoordinateRegion = MKCoordinateRegionMake(location, span)
+        
+        self.map.setRegion(region, animated: false)
+        
+        
+        
+    }
     
     
     
